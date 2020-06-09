@@ -1,111 +1,77 @@
 #!/bin/bash -x
 
-everyDayStake=100;
-betEveryGame=1;
+DAILY_MONEY=100
+NUM_OFDAYS=30
+WIN=1
+LOSS=0
+BET=1
+FLAG=true
+LAST_LOSSAMOUNT=0
 
-echo "Gambler starts with stake of $everyDayStake$ everyday"
-echo "Gambler bets $betEveryGame$ every game"
+stakePercentAmount=$(( 50*$DAILY_MONEY/100 ))
+maxWin=$(( $stakePercentAmount+$DAILY_MONEY ))
+maxLoss=$(( $DAILY_MONEY-$stakePercentAmount ))
+totalWinOrLoss=0
+daysWin=0
+daysLoss=0
 
-WIN=1;
-LOOSE=0;
+declare -A day
+declare -A month
 
-totalAmountWon=0;
-totalAmountLost=0;
-winCount=0;
-looseCount=0;
-daysWonDiff=0;
-daysLooseDiff=0;
+function gamblerDayBet()
+{
+   dayMoney=$DAILY_MONEY
+   while [ $dayMoney -lt $maxWin ] && [ $dayMoney -gt $maxLoss ]
+   do
+     rem=$(( RANDOM % 2 ))
+     if [ $rem -eq 1 ]
+     then
+        dayMoney=$(( $dayMoney+$BET ))
+     else
+        dayMoney=$(( $dayMoney-$BET ))
+     fi
+   done
+}
 
-for((month=1; month<=12; month++))
-do
+function gamblerMonthBet(){
 
-for((day=1; day<=30; day++))
-do
-        bet=1;
-    win=0;
-    loose=0;
+   for (( day=1; day<=$NUM_OFDAYS; day++ ))
+   do
+   gamblerDayBet
+      if [ $dayMoney -eq $maxLoss ]
+      then
+         totalWinOrLoss=$(( $totalWinOrLoss - $stakePercentAmount ))
+         day["Day $day"]=-$stakePercentAmount
+         month["Day $day"]=$totalWinOrLoss
+         ((daysLoss++))
+      else
+         totalWinOrLoss=$(( $totalWinOrLoss + $stakePercentAmount ))
+         day["Day $day"]=$stakePercentAmount
+         month["Day $day"]=$totalWinOrLoss
+         ((daysWin++))
+      fi
+   done
 
-    while(($bet <= 100))
-    do
-        ((bet++));
-        gamblerCheck=$((RANDOM%2));
+   echo "Total Won or loss is $totalWinOrLoss"
+   echo "Number of days Win $daysWin by $(($daysWin*$stakePercentAmount))"
 
-        if [[ $gamblerCheck -eq WIN ]]
-        then
-            echo "Gambler won 1$"
-            win=$(($win+1));
-        fi
+   luckiestDay=$( printf "%s\n" ${month[@]} | sort -nr | head -1 )
+   unluckiestDay=$( printf "%s\n" ${month[@]} | sort -nr | tail -1 )
 
-        if [[ $gamblerCheck -eq LOOSE ]]
-        then
-            echo "Gambler loose 1$"
-            loose=$(($loose+1));
-        fi
+   echo "Number of days Loss $daysLoss by  $(($daysLoss*$stakePercentAmount))"
+   echo "${!month[@]} : ${month[@]}"
 
-        echo "Amount won per day is $win$";
-        echo "Amount lost per day is $loose$";
-
-        if [[ $win == 50 ]]
-        then
-            echo "Gambler won 50 times & resigned for the day"
-            ((winCount++));
-            break;
-        fi
-
-        if [[ $loose == 50 ]]
-        then
-            echo "Gambler loose 50 times & resigned for the day"
-            ((looseCount++));
-            break;
-        fi
-
-    done
-
-    totalAmountWon=$(($totalAmountWon+$win));
-    totalAmountLost=$(($totalAmountLost+$loose));
-
-done
-
-if [[ $winCount -gt $looseCount ]]
-then
-    daysWonDiff=$(($winCount-$looseCount));
-    echo "Days won difference are $daysWonDiff"
-    echo "My luckiest day when I won maximum win is $daysWonDiff"
-fi
-
-if [[ $looseCount -gt $winCount ]]
-then
-    daysLooseDiff=$(($looseCount-$winCount));
-    echo "Days lost difference are $daysLooseDiff"
-    echo "My unluckiest day when I lost maximum loss is $daysLooseDiff"
-fi
-
-echo "Total amount won in 20 days is $totalAmountWon$"
-echo "Total amount lost in 20 days is $totalAmountLost$"
-
-echo "Days won is $winCount"
-echo "Days lost is $looseCount"
-
-
-continuePlay=1;
-uncontinuePlay=0;
-play=$((RANDOM%2));
-
-        if [[ $play -eq $continuePlay ]]
-        then
-            echo "Lets stop"
-                break;
-        fi
-
-        if [[$play -eq $uncontinuePlay ]]
-        then
-                echo "Stop playing the game"
-            break;
-        fi
-done
-
-
-
+   for data in "${!month[@]}"
+   do
+      if [[ ${month[$data]} -eq $luckiestDay ]]
+      then
+         echo "Gambler's lucky day is $data $luckiestDay"
+      elif [[ ${month[$data]} -eq $unluckiestDay ]]
+      then
+         echo "Gambler's unlucky day is $data $unluckiestDay"
+      fi
+   done
+}
 
 
 
