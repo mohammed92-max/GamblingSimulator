@@ -73,5 +73,17 @@ function gamblerMonthBet(){
    done
 }
 
+while [ $FLAG ]
+do
+   gamblerMonthBet
+   if [ $totalWinOrLoss -lt $LAST_LOSSAMOUNT ]
+   then
+      echo "Unable to play"
+      break
+   else
+      echo "$totalWinOrLoss so you can resume your play"
+   fi
+done
+
 
 
