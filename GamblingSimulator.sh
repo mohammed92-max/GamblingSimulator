@@ -16,9 +16,12 @@ looseCount=0;
 daysWonDiff=0;
 daysLooseDiff=0;
 
+for((month=1; month<=12; month++))
+do
+
 for((day=1; day<=30; day++))
 do
-    bet=1;
+        bet=1;
     win=0;
     loose=0;
 
@@ -67,14 +70,14 @@ if [[ $winCount -gt $looseCount ]]
 then
     daysWonDiff=$(($winCount-$looseCount));
     echo "Days won difference are $daysWonDiff"
-        echo "My luckiest day when I won maximum is "$daysWonDiff
+    echo "My luckiest day when I won maximum win is $daysWonDiff"
 fi
 
 if [[ $looseCount -gt $winCount ]]
 then
     daysLooseDiff=$(($looseCount-$winCount));
     echo "Days lost difference are $daysLooseDiff"
-        echo "My unluckiest day when I loss maximum is "$daysLooseDiff
+    echo "My unluckiest day when I lost maximum loss is $daysLooseDiff"
 fi
 
 echo "Total amount won in 20 days is $totalAmountWon$"
@@ -82,5 +85,27 @@ echo "Total amount lost in 20 days is $totalAmountLost$"
 
 echo "Days won is $winCount"
 echo "Days lost is $looseCount"
+
+
+continuePlay=1;
+uncontinuePlay=0;
+play=$((RANDOM%2));
+
+        if [[ $play -eq $continuePlay ]]
+        then
+            echo "Lets stop"
+                break;
+        fi
+
+        if [[$play -eq $uncontinuePlay ]]
+        then
+                echo "Stop playing the game"
+            break;
+        fi
+done
+
+
+
+
 
 
