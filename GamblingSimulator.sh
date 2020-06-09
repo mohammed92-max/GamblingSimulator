@@ -42,35 +42,39 @@ do
         echo "Amount won per day is $win$";
         echo "Amount lost per day is $loose$";
 
-                if [[ $win == 50 ]]
+        if [[ $win == 50 ]]
         then
             echo "Gambler won 50 times & resigned for the day"
-                        ((winCount++));
-                        break;
+            ((winCount++));
+            break;
         fi
 
         if [[ $loose == 50 ]]
         then
-                echo "Gambler loose 50 times & resigned for the day"
-                        ((looseCount++));
-                        break;
+            echo "Gambler loose 50 times & resigned for the day"
+            ((looseCount++));
+            break;
         fi
+
     done
 
     totalAmountWon=$(($totalAmountWon+$win));
     totalAmountLost=$(($totalAmountLost+$loose));
+
 done
 
 if [[ $winCount -gt $looseCount ]]
 then
-        daysWonDiff=$(($winCount-$looseCount));
-        echo "Days won difference are $daysWonDiff"
+    daysWonDiff=$(($winCount-$looseCount));
+    echo "Days won difference are $daysWonDiff"
+        echo "My luckiest day when I won maximum is "$daysWonDiff
 fi
 
 if [[ $looseCount -gt $winCount ]]
 then
-        daysLooseDiff=$(($looseCount-$winCount));
-        echo "Days lost difference are $daysLooseDiff"
+    daysLooseDiff=$(($looseCount-$winCount));
+    echo "Days lost difference are $daysLooseDiff"
+        echo "My unluckiest day when I loss maximum is "$daysLooseDiff
 fi
 
 echo "Total amount won in 20 days is $totalAmountWon$"
@@ -78,9 +82,5 @@ echo "Total amount lost in 20 days is $totalAmountLost$"
 
 echo "Days won is $winCount"
 echo "Days lost is $looseCount"
-
-
-
-
 
 
